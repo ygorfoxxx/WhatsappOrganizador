@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  // LOCAL: provider = "sqlite", DATABASE_URL="file:./dev.db"
+  // RAILWAY: mude para provider = "postgresql" e configure DATABASE_URL
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(cuid())
+  phone        String        @unique
+  name         String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  transactions Transaction[]
+}
+
+model Transaction {
+  id            String   @id @default(cuid())
+  userId        String
+  type          String   // INCOME ou EXPENSE
+  amount        Float
+  description   String?
+  category      String   @default("outros")
+  paymentMethod String   @default("unknown")
+  date          DateTime @default(now())
+  rawMessage    String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([userId, date])
+  @@index([userId, type, date])
+}
