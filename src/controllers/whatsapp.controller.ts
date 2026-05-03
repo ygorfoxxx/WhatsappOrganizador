@@ -19,6 +19,12 @@ export async function handleWebhook(req: Request, res: Response): Promise<void> 
   try {
     const parsed = parseWebhookPayload(req.body);
 
+    if (parsed.fromMe) {
+      console.log("[Webhook] Mensagem própria do bot, ignorando.");
+      res.status(200).json({ status: "ignored" });
+      return;
+    }
+
     if (!parsed.phone || !parsed.text) {
       console.log("[Webhook] Mensagem sem phone ou text, ignorando.");
       res.status(200).json({ status: "ignored" });

@@ -2,16 +2,32 @@ export interface ParsedMessage {
   phone: string | null;
   name: string | null;
   text: string | null;
+  fromMe: boolean;
 }
 
 export function parseWebhookPayload(body: Record<string, unknown>): ParsedMessage {
-  const result: ParsedMessage = { phone: null, name: null, text: null };
+  const result: ParsedMessage = { phone: null, name: null, text: null, fromMe: false };
 
   result.phone = extractPhone(body);
   result.name = extractName(body);
   result.text = extractText(body);
+  result.fromMe = extractFromMe(body);
 
   return result;
+}
+
+function extractFromMe(body: Record<string, unknown>): boolean {
+  const paths = [
+    "data.key.fromMe",
+    "key.fromMe",
+    "fromMe",
+  ];
+
+  for (const path of paths) {
+    const val = getNestedValue(body, path);
+    if (val === true) return true;
+  }
+  return false;
 }
 
 function extractPhone(body: Record<string, unknown>): string | null {
