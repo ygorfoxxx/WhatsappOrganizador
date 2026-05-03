@@ -5,7 +5,7 @@ generator client {
 datasource db {
   // LOCAL: provider = "sqlite", DATABASE_URL="file:./dev.db"
   // RAILWAY: mude para provider = "postgresql" e configure DATABASE_URL
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
